@@ -6,7 +6,7 @@
             [tick-tack.screen :refer [screen]]
             [tick-tack.board :refer [BOARD_SIZE]]))
 
-(def START [2 1])
+(def START [4 2])
 (def ^:private EDGE_WIDTH [2 1])
 (def ^:private ASPECT_RATIO [4 2])
 

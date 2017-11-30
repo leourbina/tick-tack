@@ -55,3 +55,17 @@
        (if-let [winner (check board)]
          winner
          (recur rest))))))
+
+(defn tie?
+  "Returns whether the board is tied"
+  [board]
+  (let [full? (fn [row]
+                (every? some? row))]
+    (every? full? board)))
+
+(defn game-over?
+  [board]
+  (if-let [winner (won? board)]
+    winner
+    (when (tie? board)
+      :tie)))
