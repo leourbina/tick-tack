@@ -1,11 +1,10 @@
 (ns tick-tack.core
   (:gen-class)
   (:require [clojure.core.async :as a :refer [<!!]]
-            [clojure.string :as s]
             [mount.core :as mount]
-            [tick-tack.pprint :as p]
+            [tick-tack.board :as b]
             [tick-tack.render :as r]
-            [tick-tack.board :as b]))
+            [tick-tack.controls :as c]))
 
 (defn next-player
   [player]
@@ -35,14 +34,14 @@
 
 (defn -main []
   (mount/start)
-  (r/make-cursor-listener)
-  (r/make-quit-listener)
-  (.addShutdownHook (Runtime/getRuntime) (Thread. r/stop-app))
-  (let [next-move (r/make-move-listener)]
-    (loop [scores {:x 0 :o 0 :tie 0}]
+  (c/make-cursor-listener)
+  (c/make-quit-listener)
+  (.addShutdownHook (Runtime/getRuntime) (Thread. c/stop-app))
+  (let [next-move (c/make-move-listener)
+        scores {:x 0 :o 0 :tie 0}]
+    (r/render-scores scores)
+    (loop [scores scores]
       (let [winner (game-loop next-move)
             new-scores (update scores winner inc)]
-        (println "\n\n--- Current score ---:")
-        (printf "X: %s, O: %s, Ties: %s\n" (:x new-scores) (:o new-scores) (:tie new-scores))
-        (println "--- New Game ---\n\n")
+        (r/render-scores new-scores)
         (recur new-scores)))))
