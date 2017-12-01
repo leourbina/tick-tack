@@ -28,7 +28,7 @@
   ([scores] (render-scores scores START))
   ([scores start]
    (let [[x y] (map + [0 (+ 2 (* 2 BOARD_SIZE))] start)]
-     (sc/put-string screen x y (format "X: %s  Y: %s  Tie: %s"
+     (sc/put-string screen x y (format "X: %s  O: %s  Tie: %s"
                                  (scores :x)
                                  (scores :o)
                                  (scores :tie))))

@@ -42,7 +42,7 @@
   [coords size]
   (every? (partial in-range? size) coords))
 
-(def valid-keys #{:up :down :left :right :enter \q})
+(def valid-keys #{:up :down :left :right :enter \q \space})
 
 (defn valid-key?
   [key]
@@ -103,7 +103,7 @@
 (defn make-move-listener
   ([] (make-move-listener START))
   ([start]
-   (let [submit-ch (chan 1 (filter #{:enter}))
+   (let [submit-ch (chan 1 (filter #{:enter \space}))
          play-ch (chan)]
      (a/sub key-publisher :keys submit-ch)
      (go-loop [submit (<! submit-ch)]
