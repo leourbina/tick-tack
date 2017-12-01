@@ -36,6 +36,8 @@
 (defn -main []
   (mount/start)
   (r/make-cursor-listener)
+  (r/make-quit-listener)
+  (.addShutdownHook (Runtime/getRuntime) (Thread. r/stop-app))
   (let [next-move (r/make-move-listener)]
     (loop [scores {:x 0 :o 0 :tie 0}]
       (let [winner (game-loop next-move)

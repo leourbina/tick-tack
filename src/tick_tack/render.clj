@@ -62,7 +62,7 @@
      (sc/move-cursor screen original-cursor)
      (sc/redraw screen))))
 
-(def valid-keys #{:up :down :left :right :enter})
+(def valid-keys #{:up :down :left :right :enter \q})
 
 (defn valid-key?
   [key]
@@ -106,8 +106,7 @@
    (sc/move-cursor screen (coords->cursor [0 0] start))
    (sc/redraw screen)
    (let [moves-ch (chan 1 (comp
-                            (filter (fn [key]
-                                      (not= :enter key)))
+                            (filter #{:up :down :left :right})
                             (map (fn [key] #(apply-key % key)))))]
      (a/sub key-publisher :keys moves-ch)
      (go-loop [move (<! moves-ch)]
@@ -124,7 +123,7 @@
 (defn make-move-listener
   ([] (make-move-listener START))
   ([start]
-   (let [submit-ch (chan 1 (filter (partial = :enter)))
+   (let [submit-ch (chan 1 (filter #{:enter}))
          play-ch (chan)]
      (a/sub key-publisher :keys submit-ch)
      (go-loop [submit (<! submit-ch)]
@@ -135,3 +134,14 @@
            (>! play-ch coords))
          (recur (<! submit-ch))))
      play-ch)))
+
+(defn stop-app []
+  (mount/stop)
+  (shutdown-agents))
+
+(defn make-quit-listener []
+  (let [quit-ch (chan 1 (filter #{\q}))]
+    (a/sub key-publisher :keys quit-ch)
+    (go-loop [quit (<! quit-ch)]
+      (when quit
+        (stop-app)))))
